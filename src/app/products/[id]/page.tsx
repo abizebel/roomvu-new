@@ -5,12 +5,14 @@ import Image from 'next/image';
 import { Product } from '@/types/product';
 import { productService } from '@/services/productService';
 import { useRouter } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
+export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { dispatch } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,6 +29,13 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
 
     fetchProduct();
   }, [params.id]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      dispatch({ type: 'ADD_TO_CART', payload: product });
+      router.push('/cart');
+    }
+  };
 
   if (loading) {
     return (
@@ -85,10 +94,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
               
               <div className="mt-4">
                 <button
-                  onClick={() => {
-                    // TODO: Implement add to cart functionality
-                    alert('Added to cart!');
-                  }}
+                  onClick={handleAddToCart}
                   className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200"
                 >
                   Add to Cart
