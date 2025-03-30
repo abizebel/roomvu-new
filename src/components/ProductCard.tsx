@@ -2,17 +2,23 @@
 
 import Image from 'next/image';
 import { Product } from '@/types/product';
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
   product: Product;
-  onClick?: (product: Product) => void;
 }
 
-export const ProductCard = ({ product, onClick }: ProductCardProps) => {
+export const ProductCard = ({ product }: ProductCardProps) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/products/${product.id}`);
+  };
+
   return (
     <div 
       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-      onClick={() => onClick?.(product)}
+      onClick={handleClick}
     >
       <div className="relative h-48 w-full">
         <Image
