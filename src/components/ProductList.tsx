@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Product, ProductsResponse } from '@/types/product';
-import { productService } from '@/services/productService';
-import { ProductCard } from './ProductCard';
+import { useEffect, useState } from "react";
+import { Product } from "@/types/product";
+import { productService } from "@/services/productService";
+import { ProductCard } from "./ProductCard";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -23,7 +23,8 @@ export const ProductList = () => {
         setProducts(response.products);
         setTotalProducts(response.total);
       } catch (err) {
-        setError('Failed to fetch products. Please try again later.');
+        console.log(err);
+        setError("Failed to fetch products. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -43,11 +44,7 @@ export const ProductList = () => {
   }
 
   if (error) {
-    return (
-      <div className="text-center text-red-600 p-4">
-        {error}
-      </div>
-    );
+    return <div className="text-center text-red-600 p-4">{error}</div>;
   }
 
   return (
@@ -57,7 +54,7 @@ export const ProductList = () => {
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
-      
+
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 gap-2">
           <button
@@ -71,7 +68,9 @@ export const ProductList = () => {
             Page {currentPage} of {totalPages}
           </span>
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             className="px-4 py-2 bg-blue-600 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
@@ -81,4 +80,4 @@ export const ProductList = () => {
       )}
     </div>
   );
-}; 
+};
