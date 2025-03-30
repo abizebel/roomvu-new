@@ -11,6 +11,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const router = useRouter();
   const { dispatch } = useCart();
 
@@ -30,10 +31,17 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     fetchProduct();
   }, [params.id]);
 
-  const handleAddToCart = () => {
-    if (product) {
-      dispatch({ type: 'ADD_TO_CART', payload: product });
+  const handleAddToCart = async () => {
+    if (!product) return;
+    
+    setIsAddingToCart(true);
+    try {
+      await dispatch({ type: 'ADD_TO_CART', payload: product });
       router.push('/cart');
+    } catch (err) {
+      setError('Failed to add item to cart');
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -95,9 +103,17 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <div className="mt-4">
                 <button
                   onClick={handleAddToCart}
-                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  disabled={isAddingToCart}
+                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Add to Cart
+                  {isAddingToCart ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Adding to Cart...
+                    </>
+                  ) : (
+                    'Add to Cart'
+                  )}
                 </button>
               </div>
             </div>
